@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+    {% block title %}
+        {{ event.event_title }}
+    {% endblock %}
+
+    {% block bodyblock %}
+        <h1> {{ event.event_title }} </h1><br />
+        <div>
+            <h3>Event Info</h3>
+            <ul>
+                <li>Artist : {{ event.artist }}</li>
+                <li>Date : {{ event.event_date }}</li>
+                <li>Location : {{ event.venue }}, {{ event.city }}</li>
+                <li>Start Time : {{ event.start_time }}</li>
+                {% if event.is_full %}
+                    <li>Tickets Remaining :  SOLD OUT</li>
+                {% else %}
+                    <li>Tickets Remaining : {{ event.seats_left }}</li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endblock %}

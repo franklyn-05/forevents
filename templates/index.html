@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+    {% block title %}
+        Home
+    {% endblock %}
+
+    {% block bodyblock %}
+        <h1> 4Events - Finding Future Memories</h1>
+        <img src="{% static 'images/4events_logo.png' %}" alt="Logo" width="150" height="150"/>
+        <br />
+        <h2> Newest Added Events </h2>
+        <div>
+            <ol>
+                {% for item in newest %}
+                    <li>
+                        <a href="{% url 'event' item.slug %}">{{ item.event_title}} | {{ item.event_date }} at {{ item.start_time }} </a>            
+                    </li>
+                {% endfor %}
+            </ol>
+        </div><br />
+        
+        <h2> Upcoming Events </h2>
+        <div>
+            <ol>
+                {% for item in upcoming %}
+                    <li>
+                        <a href="{% url 'event' item.slug %}">{{ item.event_title }} | {{ item.event_date }} at {{ item.start_time }}</a>
+                    </li>
+                {% endfor %}
+            </ol>
+        </div>
+    {% endblock %}
