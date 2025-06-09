@@ -1,9 +1,29 @@
 {% extends 'base.html' %}
 
     {% block title %}
-        {{ user.username }}'s Profile
+        {{ user.user.username }}'s Profile
     {% endblock %}
 
     {% block bodyblock %}
-        
+        {% if user.is_artist %}
+            <h2>
+                {{ user.stage_name}}'s Profile
+            </h2>
+            <div><img src="{{ user.profile_pic.url }}"/></div>
+            {% if user.bio %}
+                <h3>
+                    {{ user.bio }}
+                </h3>
+            {% endif %}
+            <h3>
+                Your Upcoming events
+            </h3>
+            <ul>
+                {% for event in user_events %}
+                <li><a href="{% url 'event' event.slug %}">{{ event.event_title }}</a></li>
+                {% endfor %}
+            </ul><br />
+            <a href="{% url 'add_event' %}">Add new event</a> 
+
+        {% endif %}
     {% endblock %}

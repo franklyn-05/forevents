@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 class AppUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile", verbose_name="User Profile", primary_key=True)
-    profile_pic = models.ImageField(upload_to='media/profile_pics/', blank=True)
+    profile_pic = models.ImageField(upload_to='profile_pics/', blank=True)
     bio = models.TextField(blank=True, default='')
     is_artist = models.BooleanField()
     stage_name = models.CharField(max_length=100, blank=True)
@@ -25,7 +25,7 @@ class Event(models.Model):
     venue = models.CharField(max_length=75)
     city = models.CharField(max_length=75)
     start_time = models.TimeField("Event Start Time")
-    artist = models.ForeignKey(AppUser, on_delete=models.CASCADE) #models.CharField(max_length=50)
+    artist = models.ForeignKey(AppUser, on_delete=models.CASCADE)
     capacity = models.IntegerField()
     seats_booked = models.IntegerField(default=0)
     slug = models.SlugField(primary_key=True, unique=True)
@@ -55,8 +55,9 @@ class Booking(models.Model):
     time_booked = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if self.event.is_full:
+        if self.event.is_full():
             raise IndexError("Event is full")
         else:
             self.event.seats_booked += 1
+            self.event.save()
             super(Booking, self).save(*args, **kwargs)

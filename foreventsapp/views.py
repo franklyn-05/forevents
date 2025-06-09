@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import Http404, HttpResponse
 from django.urls import reverse
-from foreventsapp.models import AppUser, Event
+from foreventsapp.models import AppUser, Event, Booking
 from foreventsapp.forms import AppUserForm, EventForm, UserForm
 from datetime import datetime
 from django.contrib.auth import authenticate, login, logout
@@ -115,8 +115,30 @@ def user_logout(request):
 
 def profile(request):
 
-    user = request.user.profile
-    users_events = Event.objects.filter(artist=user)
-    context = {'user' : user, 'user_events' : users_events}
+    profile = request.user.profile
+    users_events = Event.objects.filter(artist=profile, event_date__gte=datetime.now()).order_by('event_date')
+    context = {'user' : profile, 'user_events' : users_events}
+    print(profile.profile_pic.url)
 
     return render(request, 'profile.html', context)
+
+def artist(request, name):
+
+    artst = get_object_or_404(AppUser, stage_name=name)
+    users_events = Event.objects.filter(artist=artst, event_date__gte=datetime.now()).order_by('event_date')
+
+    if artst.stage_name != request.user.profile.stage_name:
+        context = {'artist': artist, 'events': users_events}
+        return render(request, 'artist.html', context)
+    else:
+        # Artist is the current user, send them to their profile page instead 
+        return redirect(reverse('profile'))
+
+def book_event(request, event_slug):
+    booking = Booking.objects.get_or_create(event=Event.objects.get(slug= event_slug), user=request.user.profile)[1]
+    if not booking:
+        return HttpResponse("You have already booked this event")
+    else:
+        return redirect(reverse('profile'))
+
+

@@ -9,7 +9,7 @@
         <div>
             <h3>Event Info</h3>
             <ul>
-                <li>Artist : {{ event.artist }}</li>
+                <li>Artist : <a href="{% url 'artist' event.artist.stage_name %}">{{ event.artist }}</a></li>
                 <li>Date : {{ event.event_date }}</li>
                 <li>Location : {{ event.venue }}, {{ event.city }}</li>
                 <li>Start Time : {{ event.start_time }}</li>
@@ -17,7 +17,11 @@
                     <li>Tickets Remaining :  SOLD OUT</li>
                 {% else %}
                     <li>Tickets Remaining : {{ event.seats_left }}</li>
+                    <button type="button">
+                        <a href="{% url 'book_event' event.slug %}">Book This Event!</a>
+                    </button>
                 {% endif %}
             </ul>
+
         </div>
     {% endblock %}

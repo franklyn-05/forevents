@@ -10,5 +10,7 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
-    path('profile/', views.profile, name='profile'),
+    path('profile', views.profile, name='profile'),
+    path('artist/<str:name>', views.artist, name='artist'),
+    path('book_event/<slug:event_slug>', views.book_event, name='book_event')
 ]

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+    {% block title %}
+        {{ artist.stage_name }}
+    {% endblock %}
+
+    {% block bodyblock %}
+        <h1>
+            {{ artist.stage_name }}
+        </h1>
+        <img src="{{ artist.profile_pic.url }}" alt="No Artist Photo Found"/>
+        <h2>
+            Upcoming events
+        </h2>
+        <ul>
+            {% for event in events %}
+            <li><a href="{% url 'event' event.slug %}">{{ event.event_title }}</a></li>
+            {% endfor %}
+        </ul>
+
+    {% endblock %}
