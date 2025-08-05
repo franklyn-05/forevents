@@ -1,27 +1,58 @@
 {% extends 'base.html' %}
+{% load static %}
 
     {% block title %}
         {{ event.event_title }}
     {% endblock %}
 
     {% block bodyblock %}
-        <h1> {{ event.event_title }} </h1><br />
-        <div>
-            <h3>Event Info</h3>
-            <ul>
-                <li>Artist : <a href="{% url 'artist' event.artist.stage_name %}">{{ event.artist }}</a></li>
-                <li>Date : {{ event.event_date }}</li>
-                <li>Location : {{ event.venue }}, {{ event.city }}</li>
-                <li>Start Time : {{ event.start_time }}</li>
-                {% if event.is_full %}
-                    <li>Tickets Remaining :  SOLD OUT</li>
-                {% else %}
-                    <li>Tickets Remaining : {{ event.seats_left }}</li>
-                    <button type="button">
-                        <a href="{% url 'book_event' event.slug %}">Book This Event!</a>
-                    </button>
-                {% endif %}
-            </ul>
-
+        <!-- <h1> {{ event.event_title }} </h1><br />
+        <div class="relative">
+            <img src="{{ MEDIA_URL}}{{ event.artist.profile_pic.name }}" class="w-full h-80 object-center"/>
+            <div class="absolute bottom-0 left-0 right-0 px-4 py-2 bg-gray-700 ">
+                <h3 class="text-3xl">Event Info</h3>
+                <ul>
+                    <li>Artist : <a href="{% url 'artist' event.artist.stage_name %}">{{ event.artist }}</a></li>
+                    <li>Date : {{ event.event_date }}</li>
+                    <li>Location : {{ event.venue }}, {{ event.city }}</li>
+                    <li>Start Time : {{ event.start_time }}</li>
+                    {% if event.is_full %}
+                        <li>Tickets Remaining :  SOLD OUT</li>
+                    {% else %}
+                        <li>Tickets Remaining : {{ event.seats_left }}</li>
+                        <button type="button">
+                            <a href="{% url 'book_event' event.slug %}">Book This Event!</a>
+                        </button>
+                    {% endif %}
+                </ul>
+            </div> -->
+        <div class="relative rounded-lg overflow-hidden border-4">
+            <img 
+                src="{{ MEDIA_URL}}{{ event.artist.profile_pic.name }}" 
+                alt="{{ event.artist.stage_name }}" 
+                class="w-full h-100 object-cover"/>
+            <div class="absolute left-0 right-0 bottom-0 flex flex-col justify-end p-4 bg-gradient-to-t from-black/60 to-transparent">
+                <h3 class="text-3xl py-3 text-white">{{ event.tour_name }}, {{ event.city }}</h3>
+                <ul class="text-gray-200 space-y-1">
+                    <li><a href="{% url 'artist' event.artist.stage_name %}" class="text-blue-300 hover:underline text-xl">{{ event.artist }}</a></li>
+                    <li class="text-lg py-1">{{ event.event_date }}, {{ event.start_time }}</li>
+                    <li class="text-lg py-1">{{ event.venue }}</li>
+                    {% if event.is_full %}
+                        <li>Tickets Remaining: <span class="font-bold">SOLD OUT</span></li>
+                    {% elif event.nearly_sold_out %}
+                        <li>Less than 10% of tickets are available, book now!</li>
+                        <button class="bg-blue-600 text-white rounded mt-2 p-2 hover:bg-blue-700">
+                            <a href="{% url 'book_event' event.slug %}">Book This Event!</a>
+                        </button>
+                    {% else %}
+                        <li>Tickets Available</li>
+                        <button class="bg-blue-600 text-white rounded mt-2 p-2 hover:bg-blue-700">
+                            <a href="{% url 'book_event' event.slug %}">Book This Event!</a>
+                        </button>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
+
+        <!-- </div> -->
     {% endblock %}

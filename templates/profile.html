@@ -1,29 +1,118 @@
 {% extends 'base.html' %}
+{% load static %}
 
     {% block title %}
-        {{ user.user.username }}'s Profile
+        {{ profile.user.username }}'s Profile
     {% endblock %}
 
     {% block bodyblock %}
-        {% if user.is_artist %}
-            <h2>
-                {{ user.stage_name}}'s Profile
-            </h2>
-            <div><img src="{{ user.profile_pic.url }}"/></div>
-            {% if user.bio %}
+        <div class="flex py-3 px-8">
+            <img src="{{ MEDIA_URL }}{{ profile.profile_pic.name }}" class=" size-48 rounded-full"/>
+            <div class="block">
+                <h1 class=" pl-15 pt-2 h-1/2 text-4xl">
+                    {{ profile.user.username }}
+                </h1>
+                <div class="flex">
+                    <p class="text-2xl px-15">Followers</p>
+                    <p class="text-2xl px-15">Following</p>
+                </div>
+                <div class="flex">
+                    <p class="text-lg px-24">101</p>
+                    <p class="text-lg px-27">101</p>
+                </div>
+            </div>
+        </div>
+        <hr class="px-5 pb-5"/>
+            {% if profile.bio %}
                 <h3>
-                    {{ user.bio }}
+                    {{ profile.bio }}
                 </h3>
             {% endif %}
-            <h3>
-                Your Upcoming events
-            </h3>
-            <ul>
-                {% for event in user_events %}
-                <li><a href="{% url 'event' event.slug %}">{{ event.event_title }}</a></li>
-                {% endfor %}
-            </ul><br />
-            <a href="{% url 'add_event' %}">Add new event</a> 
+            {% if profile.is_artist %}
+                {% if user_events %}
+                    <h2 class="text-xl font-bold pt-3">
+                        Your Posted Events
+                    </h2>
+                    <ul class="py-3 event-grid">
+                        {% for event in user_events %}
+                            <div class="grid-item">
+                                <a href="{% url 'event' event.slug %}">
+                                {% if event.artist.profile_pic %}
+                                    <img src="{{ MEDIA_URL }}{{ event.artist.profile_pic.name }}"
+                                        alt="No Profile" class="grid-image" />
+                                {% else %}
+                                    <img src="{% static 'images/4events-logo.png' %}" 
+                                        class="grid-image"/>
+                                {% endif %}
+                                <div class="px-4 py-3 w-72">
+                                    <span class="text-gray-400 uppercase text-xs"><a class="hover:text-blue-400" href="{% url 'artist' event.artist.stage_name %}"> {{ event.artist }} </a></span>
+                                    <a href="{% url 'event' event.slug %}" class="text-lg font-bold text-black truncate block capitalize">{{ event.tour_name }}</a>
+                                    <div class="flex items-center">
+                                        <p class="text-sm text-black cursor-auto py-1">{{event.city}} | {{ event.event_date }}</p>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                    <h2>
+                        Your Past Events
+                    </h2>
+                    <ul class="py-3 event-grid">
+                        {% for event in archive %}
+                            <div class="grid-item">
+                                <a href="{% url 'event' event.slug %}">
+                                {% if event.artist.profile_pic %}
+                                    <img src="{{ MEDIA_URL }}{{ event.artist.profile_pic.name }}"
+                                        alt="No Profile" class="grid-image brightness-50" />
+                                {% else %}
+                                    <img src="{% static 'images/4events-logo.png' %}" 
+                                        class="grid-image"/>
+                                {% endif %}
+                                <div class="px-4 py-3 w-72">
+                                    <span class="text-gray-400 uppercase text-xs"><a class="hover:text-blue-400" href="{% url 'artist' event.artist.stage_name %}"> {{ event.artist }} </a></span>
+                                    <a href="{% url 'event' event.slug %}" class="text-lg font-bold text-black truncate block capitalize">{{ event.tour_name }}</a>
+                                    <div class="flex items-center">
+                                        <p class="text-sm text-black cursor-auto py-1"> {{event.city}} | {{ event.event_date }}</p>
+                                    </div>
+                                </div>
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </ul>               
+                {% else %}
+                    <p class="text=xl underline">No Events</p>
+                {% endif %}
+            {% endif %}
 
+        {% if bookings %}
+            <h2 class=" text-xl font-bold py-3">
+                Your Booked Events
+            </h2>
+            <ul class="event-grid">
+                {% for booking in bookings %}
+                    <div class="grid-item">
+                        <a href="{% url 'event' booking.event.slug %}">
+                        {% if booking.event.artist.profile_pic %}
+                            <img src="{{ MEDIA_URL }}{{ booking.event.artist.profile_pic.name }}"
+                                alt="No Profile" class="grid-image" />
+                        {% else %}
+                            <img src="{% static 'images/4events-logo.png' %}" 
+                                class="grid-image"/>
+                        {% endif %}
+                        <div class="px-4 py-3 w-72">
+                            <span class="text-gray-400 uppercase text-xs"><a class="hover:text-blue-400" href="{% url 'artist' booking.event.artist.stage_name %}"> {{ booking.event.artist }} </a></span>
+                            <a href="{% url 'event' booking.event.slug %}" class="text-lg font-bold text-black truncate block capitalize">{{ booking.event.tour_name }}</a>
+                            <div class="flex items-center">
+                                <p class="text-sm text-black cursor-auto py-1">{{booking.event.city}} | {{ booking.event.event_date }}</p>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <h2>No booked events... yet</h2>
+            <a href="{% url 'events' %}"><strong>Book your next event here!</strong></a>
         {% endif %}
     {% endblock %}

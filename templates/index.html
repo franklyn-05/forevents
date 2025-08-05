@@ -1,33 +1,67 @@
 {% extends 'base.html' %}
 {% load static %}
 
+
     {% block title %}
         Home
     {% endblock %}
 
     {% block bodyblock %}
-        <h1> 4Events - Finding Future Memories</h1>
-        <img src="{% static 'images/4events_logo.png' %}" alt="Logo" width="150" height="150"/>
         <br />
-        <h2> Newest Added Events </h2>
-        <div>
-            <ol>
-                {% for item in newest %}
-                    <li>
-                        <a href="{% url 'event' item.slug %}">{{ item.event_title}} | {{ item.event_date }} at {{ item.start_time }} </a>            
-                    </li>
-                {% endfor %}
-            </ol>
-        </div><br />
-        
-        <h2> Upcoming Events </h2>
-        <div>
-            <ol>
-                {% for item in upcoming %}
-                    <li>
-                        <a href="{% url 'event' item.slug %}">{{ item.event_title }} | {{ item.event_date }} at {{ item.start_time }}</a>
-                    </li>
-                {% endfor %}
-            </ol>
+        <h2 class="text-3xl pb-3"> Upcoming Events </h2>
+        <div class="event-grid">
+            {% for item in upcoming %}
+                <div class="grid-item">
+                    <a href="{% url 'event' item.slug %}">
+                    {% if item.artist.profile_pic %}
+                        <img src="{{ MEDIA_URL }}{{ item.artist.profile_pic.name }}"
+                            alt="Product" class="grid-image" />
+                    {% else %}
+                        <img src="{% static 'images/4events-logo.png' %}" 
+                            class="grid-image"/>
+                    {% endif %}
+                    <div class="px-4 py-3 w-72">
+                    <span class="text-gray-400 uppercase text-xs"><a class="hover:text-blue-400" href="{% url 'artist' item.artist.stage_name %}"> {{ item.artist }} </a></span>
+                        <a href="{% url 'event' item.slug %}" class="text-lg font-bold text-black truncate block capitalize">{{ item.tour_name }}</a>
+                        <div class="flex items-center">
+                            <p class="text-sm text-black cursor-auto py-1">{{ item.city }} | {{ item.event_date }}</p>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            {% endfor %}
         </div>
+        <div class="py-2">
+            <a class="underline" href="{% url 'events' %}">View More</a>
+        </div>
+
+
+        <h2 class="text-3xl py-3"> Recently Added </h2>
+        <div class="event-grid">
+            {% for item in newest %}
+                <div class="grid-item">
+                    <a href="{% url 'event' item.slug %}">
+                    {% if item.artist.profile_pic %}
+                        <img src="{{ MEDIA_URL }}{{ item.artist.profile_pic.name }}"
+                            alt="No Profile" class="grid-image" />
+                    {% else %}
+                        <img src="{% static 'images/4events-logo.png' %}" 
+                            class="grid-image"/>
+                    {% endif %}
+                    <div class="px-4 py-3 w-72">
+                        <span class="text-gray-400 uppercase text-xs"><a class="hover:text-blue-400" href="{% url 'artist' item.artist.stage_name %}"> {{ item.artist }} </a></span>
+                        <a href="{% url 'event' item.slug %}" class="text-lg font-bold text-black truncate block capitalize">{{ item.tour_name }}</a>
+                        <div class="flex items-center">
+                            <p class="text-sm text-black cursor-auto py-1">{{ item.city }} | {{ item.event_date }}</p>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="py-2">
+            <a class="underline" href="{% url 'events' %}">View More</a>
+        </div>
+        <br />
+    
     {% endblock %}

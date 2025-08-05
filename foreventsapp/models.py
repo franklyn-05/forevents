@@ -1,6 +1,5 @@
 from datetime import datetime
 from django.db import models
-from django import forms
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 
@@ -11,6 +10,8 @@ class AppUser(models.Model):
     bio = models.TextField(blank=True, default='')
     is_artist = models.BooleanField()
     stage_name = models.CharField(max_length=100, blank=True)
+    followers = models.IntegerField(default=0)
+    following = models.IntegerField(default=0)
 
     def __str__(self):
         if self.stage_name:
@@ -20,7 +21,7 @@ class AppUser(models.Model):
         
 
 class Event(models.Model):
-    event_title = models.CharField(max_length=200)
+    tour_name = models.CharField(max_length=200)
     event_date = models.DateField("Event Date")
     venue = models.CharField(max_length=75)
     city = models.CharField(max_length=75)
@@ -32,27 +33,36 @@ class Event(models.Model):
     date_added = models.DateTimeField()
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.event_title)
+        self.slug = slugify(f"{self.artist} {self.tour_name}, {self.city} {self.event_date.year}")
         self.date_added = datetime.now()
         super(Event, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ["-event_date", "start_time"]
+        unique_together = ["tour_name", "event_date", "city"]
 
     def __str__(self):
-        return self.event_title
+        return f"{self.artist} {self.tour_name}, {self.city} {self.event_date.year}"
 
     def is_full(self):
         return self.seats_booked >= self.capacity
     
     def seats_left(self):
         return self.capacity - self.seats_booked
+    
+    def nearly_sold_out(self):
+        return (self.capacity - self.seats_booked) <= self.capacity / 10
+        #True if less than 10% of seats are available to book
+
+    def has_happened(self):
+        return self.event_date >= datetime.now()
+
 
 
 class Booking(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(AppUser, on_delete=models.CASCADE)
-    time_booked = models.DateTimeField(auto_now_add=True)
+    time_booked = models.DateTimeField()
 
     def save(self, *args, **kwargs):
         if self.event.is_full():
@@ -60,4 +70,19 @@ class Booking(models.Model):
         else:
             self.event.seats_booked += 1
             self.event.save()
+            self.time_booked = datetime.now()
             super(Booking, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f'{self.user.user.username} - {self.event}'
+    
+class Follow(models.Model):
+    user_followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name="followed")
+    followed_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="following")
+    followed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.followed_by.username} follows {self.user_followed.username}"
+    
+    def save(self, *args, **kwargs):
+        self.user_followed.profile.followers += 1

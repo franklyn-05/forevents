@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Rubik", sans-serif;
+}
+
+@utility container {
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+}
+
+.btn {
+    @apply bg-blue-500;
+    @apply hover:bg-sky-300 rounded-2xl;
+}
+
+.nav-bar {
+    @apply bg-blue-300 pl-4 pr-2 flex items-center justify-between;
+}
+
+.nav-elt {
+    @apply p-2 rounded-2xl hover:underline; 
+}
+
+.event-grid {
+    @apply grid grid-cols-4 gap-x-2 gap-y-4 mt-2 mb-2;
+}
+
+.grid-item {
+    @apply w-72 bg-white shadow-md rounded-xl border-black duration-500 hover:scale-105 hover:shadow-xl;
+}
+
+.grid-image {
+    @apply h-80 w-72 object-cover rounded-t-xl;
+}
+
+.event-artist {
+    @apply text-gray-400 uppercase text-xs hover:text-blue-400;
+}
+
+.filterDiv {
+    @apply hidden;
+}
+
+.show {
+    @apply block;
+}
+
+.filterType {
+    @apply px-2;
+}
+

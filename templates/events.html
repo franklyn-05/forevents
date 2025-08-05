@@ -1,18 +1,88 @@
 {% extends 'base.html' %}
+{% load static %}
+
+    {% block page_js %}
+        <script src="{% static 'js/events.js' %}"></script>
+    {% endblock %}
 
     {% block title %}
         All Events
     {% endblock %}
 
     {% block bodyblock %}
-        <h1> All Events </h1>
+        <h1 class="text-3xl font-semibold pb-3 pt-3">
+            All Events
+        </h1>
+        <div class="flex py-4">
+            <div class="filterType">
+                <select class="border p-2 rounded" id="artistFilter">
+                    <option value="all">All Artists</option>
+                    {% for artist in artists %}
+                        <option class="hover:bg-gray-600" value="{{ artist.stage_name|slugify }}">{{ artist }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filterType">
+                <select class="border p-2 rounded" id="cityFilter">
+                    <option value="all">All Cities</option>
+                    {% for city in cities %}
+                        <option value="{{ city|slugify }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
         <div>
-            <ul>
-                {% for event in events %}
-                    <li>
-                        <a href="{% url 'event' event.slug %}"> {{ event.event_title }}</a>
-                    </li><br />
+            <div class="event-grid">
+                {% for item in events %}
+                    <div class="filterDiv {{ item.artist.stage_name|slugify }} {{ item.city|slugify }} grid-item">
+                        <a href="{% url 'event' item.slug %}">
+                        {% if item.artist.profile_pic %}
+                            <img src="{{ MEDIA_URL }}{{ item.artist.profile_pic.name }}"
+                                alt="No Profile" class="grid-image" />
+                        {% else %}
+                            <img src="{% static 'images/4events-logo.png' %}" 
+                                class="grid-image"/>
+                        {% endif %}
+                        <div class="px-4 py-3 w-72">
+                            <span class="text-blue-400 uppercase text-xs"><a class="hover:text-blue-400" id="{{ item.artist.stage_name }}" href="{% url 'artist' item.artist.stage_name %}"> {{ item.artist }} </a></span>
+                            <a href="{% url 'event' item.slug %}" class="text-lg font-bold text-black truncate block capitalize">{{ item.tour_name }}</a>
+                            <div class="flex items-center">
+                                <p class="text-sm text-black cursor-auto py-1">{{ item.city }} | {{ item.event_date }}</p>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
                 {% endfor %}
-                </ul>
+                </div>
+        </div>
+
+        <h1 class="text-3xl font-semibold py-3">
+            Archived Events
+        </h1>
+        <div>
+            <ul class="event-grid">
+                {% for item in archived %}
+                    <div class="grid-item">
+                        <a href="{% url 'event' item.slug %}">
+                        {% if item.artist.profile_pic %}
+                            <img src="{{ MEDIA_URL }}{{ item.artist.profile_pic.name }}"
+                                alt="No Profile" class="grid-image brightness-50" />
+                        {% else %}
+                            <img src="{% static 'images/4events-logo.png' %}" 
+                                class="grid-image"/>
+                        {% endif %}
+                        <div class="px-4 py-3 w-72">
+                            <span class="text-blue-400 uppercase text-xs"><a class="hover:text-blue-400" id="{{ item.artist.stage_name }}" href="{% url 'artist' item.artist.stage_name %}"> {{ item.artist }} </a></span>
+                            <a href="{% url 'event' item.slug %}" class="text-lg font-bold text-black truncate block capitalize">{{ item.tour_name }}</a>
+                            <div class="flex items-center">
+                                <p class="text-sm text-black cursor-auto py-1">{{ item.city }} | {{ item.event_date }}</p>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                {% endfor %}
+            </ul>
         </div>
     {% endblock %}

@@ -31,7 +31,7 @@ class AppUserForm(forms.ModelForm):
 
     profile_pic = forms.ImageField(required=False)
     bio = forms.CharField(help_text="(optional)", widget=forms.Textarea(), required=False)
-    is_artist = forms.BooleanField(help_text="Are you an artist looking to post your events for fans?", widget=forms.CheckboxInput())
+    is_artist = forms.BooleanField(help_text="Are you an artist looking to post your events for fans?", widget=forms.CheckboxInput(), required=False)
     stage_name = forms.CharField(help_text="(For artists)", required=False)
 
     class Meta:
